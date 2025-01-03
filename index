@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Connection</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 40px 20px;
+            background-color: #ffffff;
+            color: #000000;
+            line-height: 1.6;
+        }
+
+        .card {
+            margin: 30px auto;
+            padding: 40px;
+            max-width: 500px;
+            min-height: 200px;
+            border: 1px solid #000000;
+            background-color: #ffffff;
+            font-size: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .card.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 24px;
+            letter-spacing: 0.5px;
+        }
+
+        .button {
+            margin: 10px;
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 10px;
+        }
+
+        .button:hover {
+            background-color: #333333;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+
+        .counter {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666666;
+            letter-spacing: 1px;
+        }
+
+        .card-content {
+            font-weight: 300;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 30px;
+                margin: 20px auto;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+
+        /* Dark mode styles */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #000000;
+                color: #ffffff;
+            }
+
+            .card {
+                background-color: #333333;
+                border: 1px solid #ffffff;
+            }
+
+            .button {
+                background-color: #ffffff;
+                color: #000000;
+            }
+
+            .button:hover {
+                background-color: #cccccc;
+            }
+
+            .counter {
+                color: #aaaaaa;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1><b>Real Connection</b></h1>
+    <div class="card hidden" id="card-display">
+        <div class="card-title" id="card-title">Click the button to draw a card!</div>
+        <div class="card-content" id="card-content"></div>
+    </div>
+    <div class="counter" id="card-counter">Cards remaining: 0</div>
+    <button class="button" onclick="drawCard()">Draw Card</button>
+    <button class="button" onclick="shuffleCards()">Shuffle</button>
+
+
+        <script>
+            const cards = [
+                
+                {title: "Rewind the Mind", question: "What’s something you wish you could do again for the first time?"},
+                {title: "Unobtanium", question: "What do you want but will never have?"},
+                {title: "Some Scars are Good", question: "Name a hard but important lesson you’ve learned."},
+                {title: "Living with Others", question: "What is hard for you but easy for others?"},
+                {title: "Superyou", question: "When do you feel like the best version of yourself?"},
+                {title: "Crazy Pills", question: "What’s your most controversial opinion?"},
+                {title: "So Profound", question: "What book, movie, or video game made you change the way you look at the world?"},
+                {title: "Someone Like Me", question: "What fictional character do you most relate to?"},
+                {title: "Great Job", question: "What occupation do you admire but could never do?"},
+                {title: "Half Empty", question: "How are things getting worse?"},
+                {title: "Half Full", question: "How are things getting better?"},
+                {title: "Newman!", question: "Who is your nemesis? Why?"},
+                {title: "Shaq", question: "What person do you most look up to? Why?"},
+                {title: "Unpaid Labor", question: "What job would you choose to have if money were no object?"},
+                {title: "Breaking Bad + 4", question: "What are your top 5 TV series?"},
+                {title: "This One Again", question: "What story have you told people the most?"},
+                {title: "0 to 100", question: "What’s the fastest way to make you mad?"},
+                {title: "Woah", question: "What have you learned this week that you’ll never forget?"},
+                {title: "Moist", question: "What is your least favorite word?"},
+                {title: "Miniscule Advantages", question: "What is the most useless skill you have?"},
+                {title: "Beyond Cake", question: "What’s the best way to spend a birthday?"},
+                {title: "Locked In", question: "What’s a key memory that has an impact on your personality?"},
+                {title: "Yolo", question: "What one sentence about how to live sticks with you most?"},
+                {title: "0oops", question: "What big mistake turned out just fine?"},
+                {title: "Put Em Up", question: "What’s the biggest fight you’ve been in? What started it?"},
+                {title: "Birds", question: "What do you know isn’t real, but want badly for it to exist?"},
+                {title: "Am I the Walrus?", question: "What is something that gets weirder the more you think about it?"},
+                {title: "$tupid", question: "What’s the dumbest thing you’ve bought?"},
+                {title: "The Book of You", question: "What would you title your autobiography?"},
+                {title: "This Question", question: "What’s something you predicted would happen and then actually did?"},
+                {title: "Life Sentence", question: "How would you summarize your life so far in one sentence?"},
+                {title: "5 Stars", question: "Who is the best person you’ve ever met? What made them the best?"},
+                {title: "Now?", question: "What question would you really like answered?"},
+                {title: "Not Reading this Really", question: "You have one year to live. How do you spend it?"},
+                {title: "Necessary", question: "What was the hardest decision you’ve ever made?"},
+                {title: "It’s f*cked", question: "In your honest opinion, what is wrong with society?"},
+                {title: "Word", question: "What is your favorite word?"},
+                {title: "Better Every Day", question: "What’s something you are terrible at? Will you improve one day?"},
+                {title: "Hippopotamus", question: "What are you hypocritical about?"},
+                {title: "Chopping Onions", question: "Have you ever cried in public? Why?"},
+                {title: "Dentists", question: "What always makes you smile?"},
+                {title: "Pick a Zombie", question: "Who do you wish were still alive?"},
+                {title: "Priceless", question: "What expensive thing is definitely worth it?"},
+                {title: "Not Forgotten", question: "What do you value much more now that it’s gone?"},
+                {title: "Adulthood", question: "What’s something you really wanted that turned out to be overrated?"},
+                {title: "Buttercups & Bottoms", question: "If you could instantly quadruple your sense of smell, would you?"},
+                {title: "Knock Knock", question: "What’s your favorite joke?"},
+                {title: "The Present", question: "What’s the best gift you’ve ever been given?"},
+                {title: "DIY", question: "What have you created that you’re proud of?"},
+                {title: "The Worst of Things", question: "What do you hate that most people don’t?"},
+                {title: "The Best of Things", question: "What do you love that most people don’t?"},
+                {title: "Younger", question: "How are you different from your parents?"},
+                {title: "Irrational Hatred", question: "What’s one thing you really hate but have no good reason to?"},
+                {title: "Star Shine", question: "What celebrity do you most admire?"},
+                {title: "Wild & Crazy Guy", question: "What’s the craziest thing you’ve done?"},
+                {title: "My Precious", question: "What is your favorite thing?"},
+                {title: "AM or FM?", question: "Do you fit a stereotype?"},
+                {title: "Tiny Pleasures", question: "What small, insignificant thing gives you joy?"},
+                {title: "Friday", question: "What was the best day of your life?"},
+                {title: "....that You’ll Talk About", question: "What’s a weird thing you do that nobody notices?"},
+                {title: "Closure", question: "What can you forgive but never forget?"},
+                {title: "Esteem Engine", question: "What character trait makes you instantly respect somebody?"},
+                {title: "You’re Smarter than You Look", question: "What is the best compliment you’ve ever received?"},
+                {title: "Party Animal", question: "Two hours into a fun party, are you more energized or exhausted? Why?"},
+                {title: "American Politics", question: "What is a funny thing you’ve seen recently on the Internet?"},
+                {title: "Defend the Impossible", question: "Think of something you believe in strongly. Pretend you held the absolute opposite opinion and argue with everyone for 2 minutes about your new view."},
+                {title: "Happy Days", question: "Describe the first thing that pops in your mind when asked to describe the best day of your life."},
+                {title: "Was It All Just a Dream?", question: "What’s your most vivid nightmare? Does it say something about you?"}, {title: "Living with Myself", question: "What is easy for you but hard for others?"},
+                {title: "I’ll Be There for You", question: "What is the most important quality you look for in a friend?"},
+                {title: "Wiper Fluid", question: "What scientific or technological advance blows your mind?"},
+                {title: "Winning!", question: "What is your favorite quote?"},
+                {title: "Taxes or Timeout?", question: "Is it better to be a grownup or a kid?"},
+                {title: "Top Bomb", question: "Name the worst film you’ve ever seen. What was especially bad about it?"},
+                {title: "Thus Spaketh", question: "What would be the most alarming thing God could tell everyone?"},
+                {title: "Gross", question: "What’s something that you wish was socially acceptable?"},
+                {title: "Nope Nope Nope", question: "What was an opportunity you turned down? Why?"},
+                {title: "Tick. Tack. Tick", question: "What were the longest 5 minutes of this week?"},
+                {title: "Attraction Detraction", question: "What immediately makes you think less of somebody?"},
+                {title: "Gary, Indiana", question: "Where would you live on the planet if money didn’t matter?"},
+                {title: "Book Covers", question: "What do people assume because of your appearance? Are they right or wrong?"},
+                {title: "The Poetic Way", question: "How would you like to die? When?"},
+                {title: "Kardashians", question: "What should people care a lot less about?"},
+                {title: "Very Demure, Very Mindful", question: "What is an annoying phrase or word that should just stop?"},
+                {title: "Metaphysics", question: "What do you think happens after we die?"},
+                {title: "THE Thing", question: "What object best defines your identity?"},
+                {title: "Been Fun", question: "What did you love doing but would never do again?"},
+                {title: "Breaking up?", question: "What were the longest 5 minutes of your life?"},
+                {title: "To Be...or...Umm...Not", question: "Can you still recite the longest thing you’ve memorized? Go!"},
+                {title: "Universe", question: "Do you believe in fate? Or is everything mostly chaos?"},
+                {title: "Guaranteed Laugh", question: "What is always funny?"},
+                {title: "(Alive Ones)", question: "Do you wish you were more involved with your extended family? Why?"},
+                {title: "Erosion", question: "What’s changed the most about you in the past two years?"},
+                {title: "Pre-Mortem", question: "What’s an example where you saw it coming and you did nothing to prevent it?"},
+                {title: "Kind of a Big Deal", question: "What’s your greatest accomplishment?"},
+                {title: "It Ends Now", question: "If you were going to die in an hour, what do you think you’d think about most?"},
+                {title: "Dread Certain", question: "What fear do you have that is completely justifiable?"},
+                {title: "Pursuit of Happiness", question: "Are you currently doing what makes you happy? Why or why not? Will it change?"},
+                {title: "That’s Really Not Funny", question: "What, if anything, is too serious to be joked about?"},
+                {title: "Truth Be Told", question: "Who was the last person you talked to that’s not in this room? What did you discuss?"},
+                {title: "Monday", question: "What was the worst day of your life?"},
+                {title: "A Moment of Gratitude", question: "If you could give a thank you note to anyone in the world, who would it be? Why?"},
+                {title: "Hamburger in Hamburg", question: "Describe your perfect meal. What is it? Where is it?"},
+                {title: "Not For Me", question: "What are you proud that you haven’t done?"},
+                {title: "Quit", question: "What is something you never thought you’d be able to do, until you actually did it?"},
+                {title: "This One", question: "What question do you love answering?"},
+                {title: "All Better", question: "If you could fix one major world problem, what would you pick?"},
+                {title: "Whatever", question: "What will you likely forget someday but never forgive?"},
+                {title: "Handle Me", question: "Pick a nickname for yourself. Why did you choose it?"},
+                {title: "Pineapple on Pizza", question: "What grudge do you need to let go of?"},
+                {title: "Not as Wrinkly", question: "What’s the biggest difference between this generation of kids and older people?"},
+                {title: "Knocks", question: "What was the best opportunity you ever received? How did it work out?"},
+                {title: "Be Nice", question: "What’s the last really generous or kind thing you did?"},
+                {title: "Hate Almost Everything", question: "What is the quality you admire the most in the person you like the least?"},
+                {title: "Feel Good Vibes", question: "What are the books, movies, games, or things that always make you feel better when you get down?"},
+                {title: "Whippersnappers", question: "What’s a misconception people have about people your age?"},
+                {title: "Previously Unavailable", question: "If you could change one thing about yourself physically, what would you change?"},
+                {title: "Still Dropping", question: "What are you either at rock bottom or peaking on?"},
+                {title: "Epithets", question: "What would you like your epithet to be?"},
+                {title: "Sitting", question: "What’s a trend you can’t stand?"},
+                {title: "Yin Yang Yum", question: "What did you expect to hate but actually loved?"},
+                {title: "Ride Along", question: "If you could inhabit another person for a day and just watch, who would you pick?"},
+                {title: "Passing", question: "Has anyone close to you ever died? What helped you get through it? If not, what do you think it’ll be like?"},
+                {title: "Values, Babe", question: "What core principles do you have that won’t change?"},
+                {title: "The Moment", question: "What’s something you wish you enjoyed but never can seem to?"},
+                {title: "Mullet. 1988.", question: "Have you gone through any phases in your life? What is the most notable one?"},
+                {title: "See That?", question: "What historical event would you most like to have experienced?"},
+                {title: "The People", question: "What is the worst thing about the place you live? What is the best thing?"},
+                {title: "Bullshit", question: "How are you? Be sincere. Really. How are you?"},
+                {title: "Yikes", question: "What was the scariest moment of your life so far?"},
+                {title: "Mamma Mia", question: "What’s your favorite song lyric?"},
+                {title: "Fess Up", question: "What happened the last time you were punished? Was it fair?"},
+                {title: "You Really Should...", question: "What’s the worst piece of advice you’ve been given? Did you follow it?"},
+                {title: "Short But Sweet", question: "What are your top 5 TV miniseries and short books?"},
+                {title: "Smell So Good", question: "What smells bring back memories? Why?"},
+                {title: "You Are Amazing", question: "What do you get the most compliments about?"},
+                {title: "Fading Fading Fa...", question: "What do you wish you could remember better?"},
+                {title: "More than Ideally?", question: "How often do you feel you let people down?"},
+                {title: "Oh Huck", question: "Would you rather fight a horse-sized duck or 100 duck-sized horses?"},
+                {title: "Sacrifice Everything", question: "What is worth dying for?"},
+                {title: "HAHA, LMAO", question: "When was the last time you really, really laughed? Why?"},
+                {title: "Grenade", question: "What could someone do or say to clear this room instantly?"},
+                {title: "Inhale, Exhale, Inhale...", question: "What 3 things would you like to accomplish before dying?"},
+                {title: "Still Have It?", question: "If you could ask your future self one thing, what would it be?"},
+                {title: "Eat at Joe’s", question: "If you had a billboard that everyone on the planet had to read, what would it say?"},
+                {title: "Groundhog Day", question: "What are you really tired of explaining?"},
+                {title: "Chef’s Kiss", question: "What film, video game, or book has the best ending?"},
+                {title: "Who Even Cares?", question: "What’s an obscure fact you know?"},
+                {title: "Coward!", question: "Name something you’re irrationally afraid of."},
+                {title: "Pepper Spray", question: "In a fight to the death, what’s your go-to strategy?"},
+                {title: "Only One?", question: "If you could change one thing about your family, what would it be?"},
+                {title: "At Ease", question: "What makes you feel at peace?"},
+                {title: "Get Angry", question: "Spend 90 seconds ranting about anything."},
+                {title: "I’m Perfect", question: "What about yourself took the longest to accept?"},
+                {title: "They’re All in on It", question: "What’s your favorite conspiracy theory?"},
+                {title: "Counting Sheep", question: "If you can’t sleep, what do you usually think about? Is there a trick to falling asleep?"},
+                {title: "First Impressions", question: "What’s the first thing you’d like people to notice about you?"},
+                {title: "But It’s a Secret", question: "What’s something you’re secretly proud of?"},
+                {title: "Another Time", question: "If you could use a time machine, would you rather have one that only goes back in time or only goes forward? Where would you go?"},
+                {title: "What a Moron!", question: "What situation made you feel like an idiot?"},
+                {title: "Thursday", question: "Do you think humanity will go extinct? If so, when?"},
+                {title: "Turning Point", question: "What single event or decision most affected the rest of your life?"},
+                {title: "Annus Horribilis", question: "What was the worst year of your life? The best?"},
+                {title: "All You Need Is...", question: "Recommend something to a specific person in this room that you’re pretty sure they’ll like."},
+                {title: "Obituary", question: "What would you like to be remembered for?"},
+                {title: "Help", question: "Do you need some advice? Ask now."},
+                {title: "I Was So Wrong", question: "What has been the biggest change of heart you’ve had? Why?"},
+                {title: "Not as Easy as It Looks", question: "Somebody is going to borrow your life for the day. What’s your advice to them?"},
+                {title: "Booyah", question: "What outfit makes you feel invincible?"},
+                {title: "Skill Genie", question: "What is something you’re terrible at but wish you could do well?"},
+                {title: "A Big Small Deal", question: "What is the most trivial thing about which you have a strong opinion?"},
+                {title: "Frown Upside Down", question: "What worries you a lot? What would fix it?"},
+                {title: "Pick Your Power", question: "Which superpower would you prefer: the ability to fly or invisibility?"},
+                {title: "Been Meaning to Say", question: "What do you want to tell someone but haven’t yet? Why not?"},
+                {title: "Turkey Sushi", question: "What’s your favorite family tradition?"},
+                {title: "Another Place", question: "Where do you wish you had grown up?"},
+                {title: "Things Are Looking Down", question: "Is it smart to be a pessimist?"},
+                {title: "Atomic Habits", question: "What’s a habit you’d like to build?"},
+                {title: "Quitting to Win", question: "What’s a habit you’d like to break?"},
+                {title: "Conversations/Contraptions", question: "What have you improvised really well?"},
+                {title: "Peer Two", question: "What are the best & worst things about the two people you spend the most time around outside of family?"},
+                {title: "Nature Nurture", question: "Can people really change?"},
+                {title: "Time to Blush", question: "What’s something you like about someone listening that you’ve never told them?"},
+                {title: "Sound of Silence", question: "Can being alone become a habit? Has it ever for you?"},
+                {title: "Elderberries", question: "What’s an insult you’ll always remember?"},
+                {title: "Smells, Gels & Belles", question: "What’s a grooming, beauty, or fashion tip that people should know?"},
+                {title: "Wince and Repeat", question: "When was the last time you cringed? Why?"},
+                {title: "Democracy Idiocy", question: "What’s a terrible example of doing what the majority says?"},
+                {title: "Eh, What Do They Know?", question: "What’s a terrible example of doing it alone?"},
+                {title: "Touch That Dial", question: "What’s the worst TV show ever?"},
+                {title: "Best at Being the Worst", question: "Who is the worst villain ever?"},
+                {title: "Future Me", question: "What are you planning on doing but probably won’t?"},
+                {title: "Puppetmaster", question: "If you could control one person for a day, who would it be and what would you do?"},
+                {title: "Mice & Men", question: "What animal would you be for a day?"},
+                {title: "Profoundly Boring", question: "What’s the most overrated film you’ve seen?"},
+                {title: "Should You Though?", question: "What one thing could you do to make the people around you happier?"},
+                {title: "Sense Ability", question: "Would you prefer the superpower of zoom vision or zoom hearing at will?"},
+                {title: "Follow That Guy", question: "Who do you think is a really good leader? What makes that person so?"},
+                {title: "Dim or Dumb", question: "Would you rather be a funny idiot or a humorless genius?"},
+                {title: "Five Stars", question: "What are your top 5 favorite films?"},
+                {title: "I Amuse You? Like a Clown?", question: "What makes someone funny? Who is a good example of this?"},
+                {title: "Public Speaking Spiders", question: "What used to scare you? Does it still?"},
+                {title: "They Lied", question: "What is a strange thing you were told as a child?"},
+                {title: "Boo!", question: "Has anything supernatural or spooky ever happened to you? Tell the story."},
+                {title: "Hercules", question: "When was the last time you put in an extreme amount of effort?"},
+                {title: "See Spot Run", question: "What’s the last good thing you read? Are there three books you’d recommend?"},
+                {title: "Sunrise or Mona Lisa", question: "What is the most beautiful thing in the world?"},
+                {title: "Future Mourning", question: "What will you be nostalgic for in 30 years?"},
+                {title: "Mind the Gap", question: "Have you ever experienced culture shock?"},
+                {title: "The Basics", question: "What 3 things are most essential in life?"},
+                {title: "So Tell Me", question: "Does free will exist?"},
+                {title: "Mum & Mum", question: "If you and one other person were to get matching tattoos, what would the image be? Who is the other person?"},
+                {title: "This Thought Won’t Stop", question: "Any intrusive thoughts you want to talk about?"},
+                {title: "Violence Is the Answer", question: "Did you slap anyone lately? Did you want to?"},
+                {title: "Copy Paste", question: "Would you and your clone get along?"},
+                {title: "Grey Tomatoes", question: "What’s the worst color? Where did you last see it?"},
+                {title: "Problem Swap?", question: "What’s something on your to-do list that somebody else listening could do?"},
+                {title: "Planning Way Ahead", question: "What would you change if you knew you were never going to die?"},
+                {title: "Make Believe", question: "What’s something you’d like somebody to invent?"},
+                {title: "Money Can’t Buy Happiness?", question: "What would you buy if you won $1 million? $1 billion?"},
+                {title: "Robot Overlords", question: "If AI took all the jobs, what would you do?"},
+                {title: "Come At Me", question: "What’s the largest animal you could knock out with one punch? How about after 10 minutes?"},
+                {title: "Maybe Not", question: "What’s a famous superpower you’d never want?"},
+                {title: "Version Two", question: "If you could change anything about how you were raised, what would it be?"},
+                {title: "Say Everything", question: "What’s your life story in under 2 minutes?"},
+                {title: "Awkward", question: "What’s something you like about somebody who is listening?"},
+                {title: "Take Two", question: "When was the last time you rehearsed what you were going to say?"},
+                {title: "Playing with Portals", question: "If you could have an extra door in your house that opened to anywhere, where would you choose for it to lead?"},
+                {title: "Buddha", question: "What is your relationship to spirituality? How has it changed over time?"},
+                {title: "Back in the Day", question: "What’s an old story you’ve heard from somebody in this room you’d like to hear more about?"},
+                {title: "Gone but Not Forgotten", question: "Who is somebody you ask yourself, 'What ever happened to that guy?'"},
+                {title: "Lemons & Lemonade", question: "What do people complain about but we’re actually pretty lucky to have?"},
+                {title: "About M8s", question: "What qualities do you value most in a friend?"},
+                {title: "Daring", question: "How do you face your fears?"},
+                {title: "Nobody’s Perfect", question: "Is it ok to not be ok?"},
+                {title: "Darth Vader", question: "What makes a good parent? Could you be one?"},
+                {title: "About Time", question: "What is a loss you haven’t fully mourned yet? What is a win you haven’t celebrated yet?"},
+                {title: "On Your Mind", question: "What’s the most frequent thought you’ve had this week?"},
+                {title: "Changes", question: "What should be your New Year’s resolution next year?"},
+                {title: "Misunderstood", question: "What do people of the opposite gender not understand about your gender?"},
+                {title: "Good Cop, Bad Cop", question: "Ask a question you’ve always wanted the answer to."},
+                {title: "Time Traveller", question: "Define time in your own words. Does it exist? What do you think time means?"},
+                {title: "Core Value", question: "What quality do you believe you were born with? Do you like it?"},
+                {title: "idk, you tell me", question: "What are some open questions in your life right now? How are you going about answering them (or coping with having them unanswered)?"},
+                {title: "True Self", question: "What is at least one thing about yourself that you wish more people knew about you?"},
+                {title: "So Alive I Could Die", question: "Tell me about some times in your life at which you felt truly alive? Do these moments have anything in common?"},
+                {title: "Meritocracy", question: "What strengths have you cultivated on your own?"},
+                {title: "Bigger Man", question: "How do you feel about forgiveness? Have you forgiven someone who does not feel remorse / hasn’t apologized?"},
+                  { title: "Spark", question: "When do you feel the most like yourself?" },
+                  { title: "Wisdom", question: "What do children understand more than adults? Is there something they know more about?" },
+                  { title: "Education", question: "What school subject do you think is most important for life? What about for you personally?" },
+                  { title: "Jeff Bezos", question: "What is money? Do you think it is mundane?" },
+                  { title: "Everything counts", question: "What are you most proud of?" },
+                  { title: "Success", question: "What do you think it means to be successful? Do you think you are?" },
+                  { title: "Elon Musk", question: "How important is money? Do you think you can have too much of it?" },
+                  { title: "1850s baby", question: "What would you do for fun if you had to give up electricity?" },
+                  { title: "Water and air", question: "Is there something you couldn’t live without? What about someone?" },
+                  { title: "Compassionate?", question: "What do you think are your best qualities?" },
+                  { title: "Breakfast Club", question: "What’s a movie that changed your life?" },
+                  { title: "Brad Pitt!", question: "If they made a movie of you, who do you think they would cast? What about the casting for other people?" },
+                  { title: "Happy?", question: "How has your definition of happiness evolved over time? Do you think you are happy?" },
+                  { title: "Life advice", question: "What advice would you give to your (future) child or grandchild about family?" },
+                  { title: "Easy mode", question: "What is your best life hack?" },
+                  { title: "Chicken and egg", question: "How did your job shape your perception of who you are? How did your perception of who you are make you pick the job you have?" },
+                  { title: "Family time", question: "How did your family spend time together when you were young?" },
+                  { title: "Woah", question: "Are there any events you are proud to have attended?" },
+                  { title: "Relive your life", question: "If you had to do it all over again, would you change how you’ve lived your life?" },
+                  { title: "It makes us, us", question: "What is a tradition your family has that you would like to continue in the future? Do you know how it started?" },
+                  { title: "Cinderella", question: "What chore do you actually enjoy doing?" },
+                  { title: "Inner fire", question: "What motivates you to be brave?" },
+                  { title: "Turned out well, right?", question: "Would you raise your family in the way you were raised? Why?" },
+                  { title: "Just blood?", question: "What do you consider your family to be? Who is part of it?" },
+                  { title: "Busy bee", question: "Who is the hardest worker you know?" },
+                  { title: "End wars?", question: "What is something you would like to see the world achieve? Would you want to help?" },
+                  { title: "No Bumble?", question: "What are your must-have qualities in a partner?" },
+                  { title: "Dream, like Paris Hilton", question: "If money was no object, where would you be now? Where would you go next?" },
+                  { title: "Luca Toni", question: "What was your childhood nickname? How did you get it? Does anyone still call you that today?" },
+                  { title: "THE ALIENS", question: "Do you have any strange stories you believe are true but can’t (logically) explain?" },
+                  { title: "Sushi, obviously", question: "If you could only eat one type of food for the rest of your life, what would it be?" },
+                  { title: "Skydiving in Vietnam", question: "What are some unusual things on your bucket list?" },
+                  { title: "Book covers", question: "Do you trust first impressions? Share a first impression of someone... were you right?" },
+                  { title: "Stereotypes", question: "Define prejudices and stereotypes in your own words… What are they, and how do they begin? Have your prejudices turned out to be wrong?" },
+                  { title: "Moral of the story", question: "Can you summarise the lesson of your favourite book in one sentence?" },
+                  { title: "Dad’s humour", question: "What is your favourite trait of yourself?" },
+                  { title: "Are you real?", question: "To what extent do human concepts exist? Do you believe naming something makes it real?" },
+                  { title: "Reality", question: "According to Google, reality is only a construct of our minds, relying on how our senses perceive the world, puzzling together the information we get. Do you agree with this statement? Consider that this means that everyone lives in a different reality, as everyone’s brain perceives things differently." },
+                  { title: "Limit to one", question: "What is the one thing you have to do/experience before you die?" },
+                  { title: "Why are we here?", question: "Why do you think you are alive? Do you believe you have a purpose on this earth? What do you sense you are supposed to do before your life is over?" },
+                  { title: "When is it over?", question: "How do you know when the time to end a relationship is? Is this consistent with your previous experiences (if any)?" },
+                  { title: "Dark question", question: "Do you ever think about your own mortality? Does dying give our lives more meaning?" },
+                  { title: "Never gets old", question: "What’s something you laugh out loud when you remember? Can you tell the story without laughing?" },
+                  { title: "Peace of mind", question: "Do you hate anyone? Do you think it is (still) deserved?" },
+                  { title: "Flow state", question: "What’s something that gives you more joy than it gives others?" },
+                  { title: "Comes naturally", question: "What is something you are very good at helping others with? Do you enjoy it?" },
+                  { title: "Humanity", question: "How do you feel about you failing at something? Do you react the same way when others fail?" },
+                  { title: "Anticipation", question: "Is there something you are looking forward to in the coming days?" },
+                  { title: "Telephone", question: "When was the last time you rehearsed what you were going to say?" },
+                  { title: "The Dreamer", question: "What would it take for you to stop dreaming and start working on what you dream about?" },
+                  { title: "Daily Gratitude", question: "What brought you joy today?" },
+                  { title: "Not a horse", question: "Are you a stable individual?" },
+                  { title: "Envy or admiration", question: "What achievements of others make you jealous?" },
+                  { title: "Mum or dad?", question: "To which of your parents do you owe most of your good traits? And bad?" },
+                  { title: "Sunflowers", question: "Life is pretty good, isn’t it? Or is it not?" },
+                  { title: "Grapes, grapes’ seeds", question: "In your own words, what is a bittersweet feeling? What do consider to be a bittersweet feeling?" },
+                  { title: "Booze?", question: "What is a deal-breaker for you in a potential partner?" },
+                  { title: "Talking about the curve", question: "Do you consider yourself premature/on time/late in life’s milestones?" },
+                  { title: "Scars", question: "What is an internal or external scar you bear?" },
+                  { title: "Inability to parallel park", question: "What’s a clear sign of stupidity?" },
+                  { title: "Mutual friends?", question: "How did you end up here now/today?" },
+                  { title: "English Weather", question: "Do you like it when it rains?" },
+                  { title: "Ask please", question: "What is a question you generally appreciate being asked?" },
+                  { title: "Everyone has an opinion on everything", question: "Do you care what other people think about you? Has that ever stopped you from doing anything? Be honest…" },
+                  { title: "Impressions", question: "Who do you try to impress?" },
+                  { title: "Rhetorical question", question: "What’s a question you’re reluctant to answer but that might reveal a lot about you? You don’t need to answer it…" },
+                  { title: "Happy vibes", question: "What makes someone instantly likeable for you?" },
+                  { title: "Please don’t", question: "What’s the worst thing someone can say about you?" },
+                  { title: "Never?", question: "Have you ever questioned your sexuality?" },
+                  { title: "Sexy admiration", question: "What character trait do you not possess that you find attractive in others?" },
+                  { title: "WOSCM", question: "What makes someone privileged? Are you?" },
+                  { title: "…", question: "In what potential way have your parents messed you up?" },
+                  { title: "Out of your shoes", question: "What advice would you give yourself in your current situation if you were not you?" },
+                  { title: "Selfish to be selfless", question: "Is it important to be selfish sometimes? Do you ever catch yourself being selfish?" },
+                  { title: "Bro & Sis", question: "What is one trait you strongly share with your siblings? Was this passed down by your parents?" },
+                  { title: "Shoes!", question: "What shoes are you wearing, and what pushed you to buy them in particular?" },
+                  { title: "Priorities straight?", question: "Do you believe you have life sorted for the moment?" },
+                  { title: "Pouring rain", question: "Who decided that bad weather was bad? It’s just weather. Whether it’s good or bad depends entirely on what we do with it, don’t you agree?" },
+                  { title: "A Greek island", question: "Where in the world are you most at peace? Is there someone you can feel peace with, no matter where you are?" },
+                  { title: "You are here, so", question: "How did your parents meet?" },
+                  { title: "Secrets, kept secret", question: "Do you believe most people have something dark to hide?" },
+                  { title: "Pineapple on pizza", question: "What’s your favourite question to ask or be asked?" },
+                  { title: "Heavy", question: "Is your mother happy? If not alive, then was she?" },
+                  { title: "Very demure, very mindful", question: "What could you not live without but arguably do not need at all?" },
+                  { title: "Good in a good way?", question: "How did your parents leave you thinking about yourself?" },
+                  { title: "Harry Potter", question: "What is your patronus? What memories would you use to conjure it?" },
+                  { title: "Hogwarts", question: "What house of Hogwarts do you think you would belong to? Why is that?" },
+                  { title: "Or is it too much?", question: "Should your partner also be your best friend?" },
+                  { title: "abc, xyz", question: "What would you want people to say about you when you are not in the room?" },
+                  { title: "Mathematical model", question: "Are you a predictable person?" },
+                  { title: "Friends & Family", question: "Who is the happiest person around you? The least?" },
+                  { title: "Don’t waste it", question: "If you could text anyone in your contact list right now and they’d magically reply with a yes, who would it be and what would you ask?" },
+                  { title: "Be honest, not humble", question: "How do you think your best friend describes you to someone else?" },
+                  { title: "Too cheeky?", question: "Were you a difficult child? Do you think your mum would agree with your answer?" },
+                  { title: "Fundamentally, the same", question: "We all just want to be happy and are trying our best within our means and knowledge to achieve it, and in that sense, all humans are the same. Do you agree with this statement?" },
+                  { title: "Communists", question: "What annoys you more than it should?" }
+                
+
+
+            ];
+            // Remaining questions will follow this format...
+
+
+        let currentIndex = 0;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function updateCounter() {
+            const cardCounter = document.getElementById("card-counter");
+            cardCounter.textContent = `Cards remaining: ${cards.length - currentIndex}`;
+        }
+
+        function drawCard() {
+            const cardDisplay = document.getElementById("card-display");
+            const cardTitle = document.getElementById("card-title");
+            const cardContent = document.getElementById("card-content");
+
+            if (currentIndex < cards.length) {
+                const card = cards[currentIndex];
+                cardDisplay.classList.remove('visible');
+                setTimeout(() => {
+                    cardTitle.textContent = card.title;
+                    cardContent.textContent = card.question;
+                    cardDisplay.classList.add('visible');
+                    currentIndex++;
+                    updateCounter();
+                    localStorage.setItem("currentIndex", currentIndex);
+                }, 400);
+            } else {
+                cardTitle.textContent = "No more cards!";
+                cardContent.textContent = "Shuffle to restart.";
+            }
+        }
+
+        function shuffleCards() {
+            shuffle(cards);
+            currentIndex = 0;
+            updateCounter();
+            document.getElementById("card-title").textContent = "Cards shuffled!";
+            document.getElementById("card-content").textContent = "Click to draw a card.";
+            localStorage.removeItem("currentIndex");
+        }
+
+        function loadProgress() {
+            const savedIndex = localStorage.getItem("currentIndex");
+            if (savedIndex) {
+                currentIndex = parseInt(savedIndex, 10);
+                updateCounter();
+            } else {
+                shuffleCards();
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadProgress();
+        });
+    </script>
+</body>
+
+</html>
