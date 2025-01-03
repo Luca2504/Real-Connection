@@ -68,6 +68,22 @@
             background-color: #333333;
         }
 
+        .instructions-button {
+            margin-top: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            background-color: #555555;
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .instructions-button:hover {
+            background-color: #777777;
+        }
+
         h1 {
             font-size: 32px;
             font-weight: 300;
@@ -88,6 +104,22 @@
             line-height: 1.8;
         }
 
+        .description {
+            display: none;
+            margin-top: 50px;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #333333;
+            text-align: justify;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            border: 1px solid #cccccc;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
         @media (max-width: 600px) {
             .card {
                 padding: 30px;
@@ -96,6 +128,11 @@
 
             h1 {
                 font-size: 24px;
+            }
+
+            .description {
+                font-size: 14px;
+                max-width: 90%;
             }
         }
 
@@ -120,8 +157,23 @@
                 background-color: #cccccc;
             }
 
+            .instructions-button {
+                background-color: #aaaaaa;
+                color: #000000;
+            }
+
+            .instructions-button:hover {
+                background-color: #bbbbbb;
+            }
+
             .counter {
                 color: #aaaaaa;
+            }
+
+            .description {
+                color: #cccccc;
+                background-color: #1a1a1a;
+                border: 1px solid #444444;
             }
         }
     </style>
@@ -136,7 +188,20 @@
     <div class="counter" id="card-counter">Cards remaining: 0</div>
     <button class="button" onclick="drawCard()">Draw Card</button>
     <button class="button" onclick="shuffleCards()">Shuffle</button>
+    <div>
+        <button class="instructions-button" onclick="toggleDescription()">Instructions</button>
+    </div>
 
+    <div class="description" id="description-box">
+        These cards aim to prompt conversations with a deeper meaning and depth of connection in social scenes. 
+        You are free to play it however you want, altering it depending on the vibe, like UNO! It could even include a penalisation for not responding. However, we recommend playing it in the following way:
+        <ol>
+            <li>Draw a card</li>
+            <li>Read it out loud</li>
+            <li>Everyone has to answer it (go as deep as you want)</li>
+            <li>Repeat</li>
+        </ol>
+    </div>
 
         <script>
             const cards = [
@@ -491,7 +556,7 @@
             // Remaining questions will follow this format...
 
 
-        let currentIndex = 0;
+         let currentIndex = 0;
 
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -543,6 +608,15 @@
                 updateCounter();
             } else {
                 shuffleCards();
+            }
+        }
+
+        function toggleDescription() {
+            const descriptionBox = document.getElementById("description-box");
+            if (descriptionBox.style.display === "none" || descriptionBox.style.display === "") {
+                descriptionBox.style.display = "block";
+            } else {
+                descriptionBox.style.display = "none";
             }
         }
 
